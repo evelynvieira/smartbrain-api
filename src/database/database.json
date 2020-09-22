@@ -1,13 +1,24 @@
-[{
-  "id": 1,
-  "name": "Peppermint",
-  "email": "peppermint@email.com",
-  "entries": 0,
-  "joinedAt": "2020-09-18T22:22:18.254Z"
-}, {
-  "id": 2,
-  "name": "Bob The Drag Queen",
-  "email": "bobtheonequeen@email.com",
-  "entries": 0,
-  "joinedAt": "2020-09-19T22:22:18.254Z"
-}]
+{
+  "users":  [{
+      "id": 1,
+      "name": "Peppermint",
+      "email": "peppermint@email.com",
+      "entries": 0,
+      "joinedAt": "2020-09-18T22:22:18.254Z"
+    }, {
+      "id": 2,
+      "name": "Bob The Drag Queen",
+      "email": "bobtheonequeen@email.com",
+      "entries": 0,
+      "joinedAt": "2020-09-19T22:22:18.254Z"
+    }],
+    "logins": [{
+      "email": "bobtheonequeen@email.com",
+      "hash": "$2a$10$kthsQaXJNP9zI9d03UoE6uGxIoVA4bpTADhWKg3/QOiyBT2SQAEE.",
+      "lastUpdate": "2020-09-19T22:22:18.254Z"
+    }, {
+      "email": "peppermint@email.com",
+      "hash": "$2a$10$bYo/Q6VfvrHi9OQ9wXdggeUkinKik2sLkpBtuslIKsZv3R3/YdY.6",
+      "lastUpdate": "2020-09-19T22:22:18.254Z"
+    }]
+}

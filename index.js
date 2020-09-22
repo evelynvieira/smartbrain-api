@@ -1,13 +1,31 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const bcrypt = require('bcrypt-nodejs')
 const database = require('./src/database/database.json');
 
 const  app = express();
 app.use(bodyParser.json())
 
-const getUsers = () => database;
+const getUsers = () => database.users;
+const getLogins =() => database.logins;
+const getLastUser = () => getUsers()[getUsers().length - 1];
 const addUser = (user) => getUsers().push(user);
 const removeUser = (user) => getUsers().pop(user);
+const addLogin = (login) => {
+  const { email, password } = login;
+
+  bcrypt.hash(password, null, null, function (err, hash) {
+    if (err) {
+      res.send(400).json({ message: err.message })
+    }
+
+    getLogins().push({
+      email,
+      hash,
+      lastUpdate: new Date()
+    });
+  });
+}
 
 app.get('/:id', (req, res) => {
   const { id } = req.params;
@@ -34,28 +52,40 @@ app.put('/:id', (req, res) => {
 })
 
 app.post('/register', (req, res) => {
-  const { name, email } = req.body;
-  const { id } = getUsers()[getUsers().length - 1];
+  const { name, email, password } = req.body;
 
   addUser({
-    id: id + 1,
+    id: getLastUser().id + 1,
     name,
     email,
     entries: 0,
     joinedAt: new Date()
   });
 
-  res.json(getUsers()[getUsers().length - 1])
+  addLogin({ email, password, id: getLastUser().id })
+
+  res.json({ message: "Registrado com sucesso" })
 });
 
 app.post('/signin', (req, res) => {
   const { email, password } = req.body;
 
-  const user = getUsers().find(user => user.email === email);
+  const login = getLogins().find(login => login.email === email);
 
-  if (!user) res.status(400).json({ errorMessage: "Usuário ou senha incorretos" });
 
-  res.json({ name: user.name, entries: user.entries, joinedAt: user.joinedAt });
+  if (login) {
+    bcrypt.compare(password, login.hash, function (err, result) {
+
+      if (result) {
+        const { name, entries, joinedAt } = getUsers().find(user => user.email === email);
+        res.json({ name, entries, joinedAt });
+      } else {
+        res.status(400).json({ errorMessage: "Usuário ou senha incorretos" });
+      }
+    })
+  } else {
+    res.status(400).json({ errorMessage: "Usuário ou senha incorretos" });
+  }
 });
 
 app.listen(3000);
