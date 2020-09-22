@@ -1,0 +1,13 @@
+[{
+  "id": 1,
+  "name": "Peppermint",
+  "email": "peppermint@email.com",
+  "entries": 0,
+  "joinedAt": "2020-09-18T22:22:18.254Z"
+}, {
+  "id": 2,
+  "name": "Bob The Drag Queen",
+  "email": "bobtheonequeen@email.com",
+  "entries": 0,
+  "joinedAt": "2020-09-19T22:22:18.254Z"
+}]
