@@ -2,49 +2,54 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const UserService = require('./src/services/userService');
 const AuthService = require('./src/services/authService');
+const { NotFound } = require('./src/handler/exceptionHandler');
 
 const  app = express();
 app.use(bodyParser.json())
 
 
 app.get('/:id', (req, res) => {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;
+    const user = UserService.getUserBy({ id: Number(id) });
 
-  const user = UserService.getUserBy({ id: Number(id) });
+    if (!user) throw new NotFound("Usuário não encontrado");
 
-  if (!user) res.status(404).json({ errorMessage: "Usuário não encontrado" });
+    res.json(user);
 
-  res.json(user);
+  } catch (e) {
+    res.status(404).json({ errorMessage: e.message });
+  }
 });
 
 app.put('/:id', (req, res) => {
-  const { id } = req.params;
-  const user = UserService.updateEntries(Number(id))
-
-  if (!user) {
-    res.status(404).json({ errorMessage: "Usuário não encontrado" });
-  } else {
+  try {
+    const { id } = req.params;
+    UserService.updateEntries(Number(id));
     res.send({ message: 'Usuário atualizado' })
+  } catch (e) {
+    res.status(400).json({ errorMessage: e.message });
   }
-
 })
 
 app.post('/register', (req, res) => {
-  const { name, email, password } = req.body;
+  try {
+    const { name, email, password } = req.body;
+    AuthService.register({ name, email, password });
 
-  AuthService.register({ name, email, password });
-
-  res.json({ message: "Registrado com sucesso" })
+    res.json({ message: "Registrado com sucesso" })
+  } catch (e) {
+    res.status(400).json({ errorMessage: e.message });
+  }
 });
 
 app.post('/signin', (req, res) => {
-  const { email, password } = req.body;
-  const user = AuthService.authenticate(email, password)
-
-  if (!user) {
-    res.status(400).json({ errorMessage: "Usuário ou senha incorretos" });
-  } else {
+  try {
+    const { email, password } = req.body;
+    const user = AuthService.authenticate(email, password)
     res.json(user);
+  } catch (e) {
+    res.status(400).json({ errorMessage: e.message });
   }
 });
 

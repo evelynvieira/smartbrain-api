@@ -1,4 +1,5 @@
 const { encrypt } = require('../encryptor/encryptor');
+const { NotFound } = require('../handler/exceptionHandler');
 const database = require('../database/database.json');
 
 const getUsers = () => database.users;
@@ -26,10 +27,9 @@ const removeUser = (user) => getUsers().pop(user);
 
 const updateEntries = (id) => {
   const user = getUserBy({ id });
-  if (user) {
-    removeUser(user);
-    getUsers().push({ ...user, entries: user.entries + 1 });
-  }
+
+  removeUser(user);
+  getUsers().push({ ...user, entries: user.entries + 1 });
 
   return user;
 }
