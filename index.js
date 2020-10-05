@@ -1,8 +1,18 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const knex = require('knex');
 const UserService = require('./src/services/userService');
 const AuthService = require('./src/services/authService');
 const { NotFound } = require('./src/handler/exceptionHandler');
+const e = require('express');
+
+knex({
+  client: 'pg',
+  connection: {
+    host: '127.0.0.1',
+    database: 'smartbrain'
+  }
+ });
 
 const  app = express();
 app.use(bodyParser.json())
@@ -33,14 +43,13 @@ app.put('/:id', (req, res) => {
 })
 
 app.post('/register', (req, res) => {
-  try {
-    const { name, email, password } = req.body;
-    AuthService.register({ name, email, password });
+    const { name, username, password } = req.body;
 
-    res.json({ message: "Registrado com sucesso" })
-  } catch (e) {
-    res.status(400).json({ errorMessage: e.message });
-  }
+    AuthService.register({ name, username, password })
+    .then(data => res.json({ data: data[0], message: "Registrado com sucesso" }))
+    .catch(error =>
+      res.status(400).json({ errorMessage: "Não foi possível registrar", detail: error }));
+
 });
 
 app.post('/signin', (req, res) => {

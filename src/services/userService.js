@@ -1,27 +1,11 @@
 const { encrypt } = require('../encryptor/encryptor');
 const { NotFound } = require('../handler/exceptionHandler');
 const database = require('../database/database.json');
+const Repository = require('../database/repository');
 
 const getUsers = () => database.users;
 
-const getUserBy = (prop) => {
-  const [key, value] = Object.entries(prop)[0];
-  return getUsers().find(user => user[key] === value)
-}
-
-const getLastUserId = () => getUsers()[getUsers().length -1].id;
-
-const addUser = ({ name, email }) => {
-  const user = {
-    id: getLastUserId() + 1,
-    name,
-    email,
-    entries: 0,
-    joinedAt: new Date()
-  };
-
-  getUsers().push(user);
-}
+const getUserById = (id) => Repository.getUserById(id);
 
 const removeUser = (user) => getUsers().pop(user);
 
@@ -34,4 +18,4 @@ const updateEntries = (id) => {
   return user;
 }
 
-module.exports = { addUser, updateEntries, getUserBy };
+module.exports = { updateEntries, getUserById };

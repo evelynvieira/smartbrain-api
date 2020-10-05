@@ -2,15 +2,20 @@ const { encrypt, compareHash } = require('../encryptor/encryptor');
 const { BadRequest } = require('../handler/exceptionHandler');
 const UserService = require('../services/userService');
 const database = require('../database/database.json');
-const { getUserBy } = require('../services/userService');
+const { getUserById } = require('../services/userService');
+const Repository = require('../database/repository');
 
 const getLogins = () => database.logins;
 
 const authenticate = (email, password) => {
-  const login = getLogins().find(login => login.email === email);
+  Repository.getLoginByEmail(email).then(data => {
+    if (compareHash(password, data.hash)) {
+      return Repository.getUserByEmail()
+    }
+  });
+
   const user = UserService.getUserBy({ email });
 
-  if (login && compareHash(password, login.hash)) return user;
 
   throw new BadRequest("Usuário ou senha incorretos");
 }
@@ -25,15 +30,12 @@ const addLogin = ({ email, password }) => {
    getLogins().push(login);
 }
 
-const register = ({ name, email, password }) => {
-  if (!getUserBy({ email })) {
-    UserService.addUser({ name, email });
-    addLogin({ email, password });
+const register = ({ name, username, password }) => {
+  const hash = encrypt(password);
+  const user = { name, username, joined_at: new Date() };
+  const login = { username, hash }
 
-    return;
-  }
-
-  throw new BadRequest("Email já cadastrado");
+  return Repository.register(user, login);
 }
 
 module.exports = { register, authenticate }
