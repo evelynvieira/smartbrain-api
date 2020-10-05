@@ -1,12 +1,15 @@
 const db = require('./dbconfig');
 
 const getUserById = (id) => db.select('*').from('users').where({ id });
+
 const getLoginByUsername = (username) => db.select('*').from('login').where({ username });
-const updateUser = (user) =>
-  db.update('users')
-    .where('id', user.id)
-    .increment('entries', 1)
-    .returning('*');
+
+const updateUserEntry = (id) =>
+  db('users')
+    .where('id', '=', id)
+    .returning('entries')
+    .increment('entries', 1);
+
 const register = (user, login) =>
   db.transaction(trx => {
       trx.insert(user).returning('id').into('users')
@@ -16,4 +19,4 @@ const register = (user, login) =>
   })
   .then(id => getUserById(id[0]));
 
-module.exports = { register, getLoginByUsername, getUserById };
+module.exports = { register, getLoginByUsername, getUserById, updateUserEntry };

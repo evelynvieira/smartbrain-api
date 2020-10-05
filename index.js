@@ -26,13 +26,11 @@ app.get('/:id', (req, res) => {
 });
 
 app.put('/:id', (req, res) => {
-  try {
     const { id } = req.params;
-    UserService.updateEntries(Number(id));
-    res.send({ message: 'Usuário atualizado' })
-  } catch (e) {
-    res.status(400).json({ errorMessage: e.message });
-  }
+
+    UserService.updateEntries(Number(id))
+    .then(entry => res.send({ data: Number(entry[0]), message: 'Usuário atualizado' }))
+    .catch(error => res.status(400).json({ errorMessage: error.message }));
 })
 
 app.post('/register', (req, res) => {

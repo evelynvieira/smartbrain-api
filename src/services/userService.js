@@ -1,9 +1,5 @@
-const { encrypt } = require('../encryptor/encryptor');
-const { NotFound } = require('../handler/exceptionHandler');
-const database = require('../database/database.json');
 const Repository = require('../database/repository');
-
-const getUsers = () => database.users;
+const { NotFound } = require('../handler/exceptionHandler');
 
 const getUserById = (id) =>
   Repository.getUserById(id)
@@ -12,15 +8,6 @@ const getUserById = (id) =>
     throw new NotFound("Usuário não encontrado");
   });
 
-const removeUser = (user) => getUsers().pop(user);
-
-const updateEntries = (id) => {
-  const user = getUserBy({ id });
-
-  removeUser(user);
-  getUsers().push({ ...user, entries: user.entries + 1 });
-
-  return user;
-}
+const updateEntries = (id) => Repository.updateUserEntry(id);
 
 module.exports = { updateEntries, getUserById };
