@@ -5,7 +5,12 @@ const Repository = require('../database/repository');
 
 const getUsers = () => database.users;
 
-const getUserById = (id) => Repository.getUserById(id);
+const getUserById = (id) =>
+  Repository.getUserById(id)
+  .then(data => {
+    if (data[0]) return data[0];
+    throw new NotFound("Usuário não encontrado");
+  });
 
 const removeUser = (user) => getUsers().pop(user);
 

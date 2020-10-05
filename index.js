@@ -19,17 +19,10 @@ app.use(bodyParser.json())
 
 
 app.get('/:id', (req, res) => {
-  try {
-    const { id } = req.params;
-    const user = UserService.getUserBy({ id: Number(id) });
-
-    if (!user) throw new NotFound("Usuário não encontrado");
-
-    res.json(user);
-
-  } catch (e) {
-    res.status(404).json({ errorMessage: e.message });
-  }
+  const { id } = req.params;
+  UserService.getUserById(Number(id))
+  .then(user => res.json(user))
+  .catch(error => res.status(404).json({ errorMessage: error.message }))
 });
 
 app.put('/:id', (req, res) => {
