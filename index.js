@@ -1,18 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const knex = require('knex');
 const UserService = require('./src/services/userService');
 const AuthService = require('./src/services/authService');
-const { NotFound } = require('./src/handler/exceptionHandler');
-const e = require('express');
-
-knex({
-  client: 'pg',
-  connection: {
-    host: '127.0.0.1',
-    database: 'smartbrain'
-  }
- });
 
 const  app = express();
 app.use(bodyParser.json())
@@ -29,7 +18,13 @@ app.put('/:id', (req, res) => {
     const { id } = req.params;
 
     UserService.updateEntries(Number(id))
-    .then(entry => res.send({ data: Number(entry[0]), message: 'Usuário atualizado' }))
+    .then(data => res.send({
+      data: {
+        entries: data[0].entries,
+        updated_at: data[0].updated_at
+      },
+      message: 'Usuário atualizado'
+    }))
     .catch(error => res.status(400).json({ errorMessage: error.message }));
 })
 

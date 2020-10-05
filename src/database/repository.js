@@ -7,8 +7,9 @@ const getLoginByUsername = (username) => db.select('*').from('login').where({ us
 const updateUserEntry = (id) =>
   db('users')
     .where('id', '=', id)
-    .returning('entries')
-    .increment('entries', 1);
+    .returning('*')
+    .increment('entries', 1)
+    .update('updated_at', new Date());
 
 const register = (user, login) =>
   db.transaction(trx => {
