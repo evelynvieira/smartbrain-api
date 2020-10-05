@@ -2,23 +2,21 @@ const { encrypt, compareHash } = require('../encryptor/encryptor');
 const { BadRequest } = require('../handler/exceptionHandler');
 const UserService = require('../services/userService');
 const database = require('../database/database.json');
-const { getUserById } = require('../services/userService');
+// const { getLoginByUsername } = require('../services/userService');
 const Repository = require('../database/repository');
 
 const getLogins = () => database.logins;
 
-const authenticate = (email, password) => {
-  Repository.getLoginByEmail(email).then(data => {
-    if (compareHash(password, data.hash)) {
-      return Repository.getUserByEmail()
+const authenticate = (username, password) =>
+  Repository.getLoginByUsername(username).then(data => {
+    const login = data[0];
+
+    if (login && compareHash(password, login.hash)) {
+      return Repository.getUserById(login.user_id);
+    } else {
+      throw new BadRequest("Usuário ou senha incorretos");
     }
   });
-
-  const user = UserService.getUserBy({ email });
-
-
-  throw new BadRequest("Usuário ou senha incorretos");
-}
 
 const addLogin = ({ email, password }) => {
   const login = {

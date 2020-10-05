@@ -53,13 +53,11 @@ app.post('/register', (req, res) => {
 });
 
 app.post('/signin', (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const user = AuthService.authenticate(email, password)
-    res.json(user);
-  } catch (e) {
-    res.status(400).json({ errorMessage: e.message });
-  }
+  const { username, password } = req.body;
+
+  AuthService.authenticate(username, password)
+  .then(user => res.json(user))
+  .catch(error => res.status(400).json({ errorMessage: error.message }))
 });
 
 app.listen(3000);

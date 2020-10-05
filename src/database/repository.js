@@ -1,7 +1,7 @@
 const db = require('./dbconfig');
 
 const getUserById = (id) => db.select('*').from('users').where({ id });
-const getLoginByEmail = (email) => db.select('login').where({ email });
+const getLoginByUsername = (username) => db.select('*').from('login').where({ username });
 const updateUser = (user) =>
   db.update('users')
     .where('id', user.id)
@@ -16,4 +16,4 @@ const register = (user, login) =>
   })
   .then(id => getUserById(id[0]));
 
-module.exports = { register, getLoginByEmail, getUserById };
+module.exports = { register, getLoginByUsername, getUserById };
